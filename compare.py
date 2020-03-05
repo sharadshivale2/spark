@@ -14,7 +14,7 @@ csv_new=csv_data.sort_values(by=['Track ID'])
 
 
 def connection():
-    engine=create_engine('mysql+mysqlconnector://asingh:*ABnR*Me*B9LbetYaM@qa-ows-track.cluster-cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
+    engine=create_engine('mysql+mysqlconnector://DBcreds',echo=False)
     data_new=pd.read_sql_query("select birth_name,unique_track_id,performer_type from performer where unique_track_id in "+str(track),engine)
     return data_new
 
