@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 
 performers=int(input("enter no of performers"))
 #read the csv/excel file as pandas dataframe
-csv=pd.read_excel("E:\(11953) Meypom Müzik_Master Rights + Performer.xlsx",header=0,encoding='latin1')
+csv=pd.read_excel("path",header=0,encoding='latin1')
 #sort the dataframe according to track id
 csv_data=csv.sort_values(by=['Track ID'])
 
