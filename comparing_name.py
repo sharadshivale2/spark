@@ -34,7 +34,7 @@ csv_data.columns=csv_data.columns.str.replace(".","_")
 #create a list of track id's
 track=csv_data['Track_ID']
 #create the connection engine
-engine=create_engine('mysql+mysqlconnector://asingh:FNqXh3B8xsJPFYZu@i@prod-ows-track.cluster-cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
+engine=create_engine('mysql+mysqlconnector://DBcreds',echo=False)
 #read the database data as pandas dataframe
 database_data=pd.read_sql_query("select birth_name,performer_role_id,unique_track_id,performer_type from performer where unique_track_id in "+str(tuple(track)),engine)
 
