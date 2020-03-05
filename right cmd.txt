@@ -1,0 +1,8 @@
+https://storage.googleapis.com/minikube/releases/v1.1.0/minikube-linux-amd64
+sudo mv /root/.kube /root/.minikube $HOME
+
+
+  sudo mv /root/.kube $HOME/.kube
+
+cd /usr/local/bin
+/var/lib/minikube/certs

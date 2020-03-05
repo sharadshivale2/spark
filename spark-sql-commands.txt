@@ -1,0 +1,369 @@
+//query to find no of countries per region
+
+val sql = spark.sql("select count(`Country`),Region from data group by Region ").show
++--------------+--------------------+
+|count(Country)|              Region|
++--------------+--------------------+
+|           138|Middle East and N...|
+|            19|       North America|
+|           136|                Asia|
+|           262|  Sub-Saharan Africa|
+|           267|              Europe|
+|            99|Central America a...|
+|            79|Australia and Oce...|
++--------------+--------------------+
+
+//to find total profit in every region 
+
+val sql = spark.sql("select sum(`Total Profit`),Region from data group by Region ").show
++---------------------------------+--------------------+
+|sum(CAST(Total Profit AS DOUBLE))|              Region|
++---------------------------------+--------------------+
+|              5.105699334000002E7|Middle East and N...|
+|                       7708059.27|       North America|
+|             5.0799399100000024E7|                Asia|
+|             1.0165099246000007E8|  Sub-Saharan Africa|
+|              1.067719684500001E8|              Europe|
+|              4.133677820999999E7|Central America a...|
+|             3.1878420730000004E7|Australia and Oce...|
++---------------------------------+--------------------+
+
+//to find total units sold by each region
+
+val sql = spark.sql("select sum(`Units Sold`),Region from data group by Region ").show
++-------------------------------+--------------------+
+|sum(CAST(Units Sold AS DOUBLE))|              Region|
++-------------------------------+--------------------+
+|                       682363.0|Middle East and N...|
+|                       100739.0|       North America|
+|                       677524.0|                Asia|
+|                      1386894.0|  Sub-Saharan Africa|
+|                      1285808.0|              Europe|
+|                       503362.0|Central America a...|
+|                       417298.0|Australia and Oce...|
++-------------------------------+--------------------+
+
+
+//find the no of items sold and total profit by each country in descending order
+
+spark.sql("select Country,count(`Item Type`),sum(`Total Profit`)as total from data group by Country order by total desc ").show(5)
++--------------------+----------------+-----------------+
+|             Country|count(Item Type)|            total|
++--------------------+----------------+-----------------+
+|                Cuba|              11|       7351820.83|
+|    Papua New Guinea|               4|6085514.279999999|
+|Central African R...|               7|       5338519.48|
+|               Ghana|               8|       4736567.14|
+|            Malaysia|              10|       4715338.84|
++--------------------+----------------+-----------------+
+
+//count the total no of countries
+
+spark.sql("select count(distinct(Country))from data ").show
++-----------------------+
+|count(DISTINCT Country)|
++-----------------------+
+|                    185|
++-----------------------+
+
+//count the no of countries that use different sale channel
+
+spark.sql("select count(distinct(Country)),`Sales Channel` from data group by `Sales Channel` ").show
++-----------------------+-------------+
+|count(DISTINCT Country)|Sales Channel|
++-----------------------+-------------+
+|                    176|      Offline|
+|                    179|       Online|
++-----------------------+-------------+
+
+//find the games which were launched after year 2016
+
+spark.sql("select Rank,Name,Platform,Genre,Year,Publisher from gamedata where Year>'2016'and Year!='N/A' ").show
++-----+--------------------+--------+------------+----+------------+
+| Rank|                Name|Platform|       Genre|Year|   Publisher|
++-----+--------------------+--------+------------+----+------------+
+| 5959|Imagine: Makeup A...|      DS|  Simulation|2020|     Ubisoft|
+|14393|Phantasy Star Onl...|     PS4|Role-Playing|2017|        Sega|
+|16244|Phantasy Star Onl...|     PSV|Role-Playing|2017|        Sega|
+|16441|Brothers Conflict...|     PSV|      Action|2017|Idea Factory|
++-----+--------------------+--------+------------+----+------------+
+
+//to find top 10 rankings
+
+spark.sql("select Rank,Name,Platform,Genre,Year,Publisher,Global_Sales from gamedata where Rank>'0'and Rank <='10' ").show
++----+--------------------+--------+------------+----+---------+------------+
+|Rank|                Name|Platform|       Genre|Year|Publisher|Global_Sales|
++----+--------------------+--------+------------+----+---------+------------+
+|   1|          Wii Sports|     Wii|      Sports|2006| Nintendo|       82.74|
+|   2|   Super Mario Bros.|     NES|    Platform|1985| Nintendo|       40.24|
+|   3|      Mario Kart Wii|     Wii|      Racing|2008| Nintendo|       35.82|
+|   4|   Wii Sports Resort|     Wii|      Sports|2009| Nintendo|        33.0|
+|   5|Pokemon Red/Pokem...|      GB|Role-Playing|1996| Nintendo|       31.37|
+|   6|              Tetris|      GB|      Puzzle|1989| Nintendo|       30.26|
+|   7|New Super Mario B...|      DS|    Platform|2006| Nintendo|       30.01|
+|   8|            Wii Play|     Wii|        Misc|2006| Nintendo|       29.02|
+|   9|New Super Mario B...|     Wii|    Platform|2009| Nintendo|       28.62|
+|  10|           Duck Hunt|     NES|     Shooter|1984| Nintendo|       28.31|
++----+--------------------+--------+------------+----+---------+------------+
+
+//to find genre wise total sales of games globally
+
+spark.sql("select Genre,sum(Global_Sales)as total from gamedata group by Genre order by total desc ").show
++------------+------------------+
+|       Genre|             total|
++------------+------------------+
+|      Action|1751.1799999999691|
+|      Sports| 1330.929999999988|
+|     Shooter|1037.3699999999901|
+|Role-Playing| 927.3699999999941|
+|    Platform| 831.3699999999974|
+|        Misc| 809.9599999999936|
+|      Racing| 732.0399999999955|
+|    Fighting|448.90999999999923|
+|  Simulation|392.19999999999783|
+|      Puzzle| 244.9500000000005|
+|   Adventure|239.04000000000138|
+|    Strategy| 175.1200000000004|
++------------+------------------+
+
+//to find the total global sales of different versions of pokemon
+
+spark.sql("select sum(Global_Sales) from gamedata where Name like '%Pokemon%' ").show
++------------------+
+| sum(Global_Sales)|
++------------------+
+|202.51000000000008|
++------------------+
+
+//find the total profit of every country in the year 2014
+
+spark.sql("select sum(`Total Profit`)as total,Country from data where `Order Date` like '%2014' group by Country ").show()
++----------+--------------------+
+|     total|             Country|
++----------+--------------------+
+|1599619.22|               Libya|
+| 844085.52|             Armenia|
+|  82032.48|          Cape Verde|
+| 130510.44|             Senegal|
+| 536441.33|               Benin|
+| 760840.82|              Greece|
+| 769738.61|       Guinea-Bissau|
+|1667907.21|             Ukraine|
+| 530703.19|               Nepal|
+| 432356.77|            Portugal|
+| 273078.75|Central African R...|
+|  359812.5|      United Kingdom|
+| 391012.94|         Philippines|
+| 245270.11|          East Timor|
+| 140219.64|               Egypt|
+|  101878.5|             Eritrea|
+| 580894.56|             Romania|
+|1326834.38|             Ireland|
+| 885411.92|            Zimbabwe|
+|  578515.1|            Bulgaria|
++----------+--------------------+
+
+//find the total profit and also the total items sold that year of every country in the year 2014
+
+spark.sql("select Country,sum(`Total Profit`),concat_ws(',',collect_list(`Item Type`))as items from data where `Order Date` like '%2014' group by Country").show
++--------------------+-----------------+--------------------+
+|             Country|sum(Total Profit)|               items|
++--------------------+-----------------+--------------------+
+|               Libya|       1599619.22|    Cosmetics,Cereal|
+|             Armenia|        844085.52|              Cereal|
+|          Cape Verde|         82032.48|             Clothes|
+|             Senegal|        130510.44|           Beverages|
+|               Benin|        536441.33|    Fruits,Meat,Meat|
+|              Greece|        760840.82|           Baby Food|
+|       Guinea-Bissau|        769738.61|Office Supplies,C...|
+|             Ukraine|       1667907.21| Cosmetics,Household|
+|               Nepal|        530703.19|   Vegetables,Fruits|
+|            Portugal|        432356.77|Office Supplies,C...|
+|Central African R...|        273078.75|     Office Supplies|
+|      United Kingdom|         359812.5|     Office Supplies|
+|         Philippines|        391012.94|           Baby Food|
+|          East Timor|        245270.11|Vegetables,Beverages|
+|               Egypt|        140219.64|           Beverages|
+|             Eritrea|         101878.5|              Cereal|
+|             Romania|        580894.56|    Snacks,Household|
+|             Ireland|       1326834.38|           Household|
+|            Zimbabwe|        885411.92|Meat,Baby Food,Fr...|
+|            Bulgaria|         578515.1|           Baby Food|
++--------------------+-----------------+--------------------+
+
+
+//save the output to a text file
+spark.sql("select Country,sum(`Total Profit`),concat_ws(',',collect_list(`Item Type`))as items,concat_ws(',',collect_list(`Order Date`))as dates from data where `Order Date` like '%2014' group by Country").coalesce(1).write.format("csv").save("she.csv")
+
+
+
+//find profit percentage of a country in a year
+
+spark.sql("select Country,`Item Type`,`Total Cost`,`Total Profit`,((`Total Profit`/`Total Cost`)*100)as percent from data where Country='Pakistan' and `Order Date` like'%2011' order by Country").show(1000)
+
++--------+---------+----------+------------+------------------+
+| Country|Item Type|Total Cost|Total Profit|           percent|
++--------+---------+----------+------------+------------------+
+|Pakistan|   Fruits|  45457.48|    15831.29| 34.82658959537572|
+|Pakistan|  Clothes|   5232.64|    10722.24|204.91071428571428|
++--------+---------+----------+------------+------------------+
+
+//find publisher based profit
+
+spark.sql("select Publisher,sum(Global_Sales)as s  from gamedata group by Publisher order by s desc").show
++--------------------+------------------+
+|           Publisher|                 s|
++--------------------+------------------+
+|            Nintendo|1786.5599999999981|
+|     Electronic Arts|1110.3199999999915|
+|          Activision| 727.4599999999983|
+|Sony Computer Ent...| 607.4999999999989|
+|             Ubisoft|474.71999999999935|
+|Take-Two Interactive| 399.5399999999996|
+|                 THQ| 340.7699999999994|
+|Konami Digital En...|  283.639999999998|
+|                Sega|272.98999999999927|
+|  Namco Bandai Games| 254.0900000000008|
+|Microsoft Game St...|245.79000000000005|
+|              Capcom|200.89000000000001|
+|               Atari|157.22000000000025|
+|Warner Bros. Inte...|153.89000000000013|
+|         Square Enix|145.18000000000026|
+|Disney Interactiv...|119.96000000000004|
+|   Eidos Interactive| 98.97999999999998|
+|           LucasArts| 87.34000000000003|
+|  Bethesda Softworks| 82.14000000000003|
+|        Midway Games| 69.84999999999994|
++--------------------+------------------+
+
+//find platform based profit
+
+spark.sql("select Platform,sum(Global_Sales)as s  from gamedata group by Platform order by s desc").show
++--------+------------------+
+|Platform|                 s|
++--------+------------------+
+|     PS2|1255.6399999999871|
+|    X360| 979.9599999999996|
+|     PS3| 957.8399999999987|
+|     Wii| 926.7099999999971|
+|      DS| 822.4899999999874|
+|      PS|  730.659999999997|
+|     GBA|  318.499999999998|
+|     PSP| 296.2799999999948|
+|     PS4| 278.0999999999994|
+|      PC|258.81999999999846|
+|      XB|258.25999999999834|
+|      GB|255.44999999999987|
+|     NES|251.06999999999988|
+|     3DS| 247.4600000000001|
+|     N64|218.87999999999985|
+|    SNES|200.05000000000024|
+|      GC| 199.3600000000007|
+|    XOne|141.05999999999995|
+|    2600| 97.08000000000003|
+|    WiiU| 81.86000000000006|
++--------+------------------+
+
+//sort the data base on the order priority
+
+spark.sql("select concat_ws(',',collect_list(`Item Type`)) as items,concat_ws(',',collect_list(Country)) as country,`Order Priority` from data group by `Order Priority` order by `Order Priority`  ").show
++--------------------+--------------------+--------------+
+|               items|             country|Order Priority|
++--------------------+--------------------+--------------+
+|Baby Food,Cereal,...|Libya,Japan,Greec...|             C|
+|Fruits,Cereal,Cer...|Chad,Armenia,Erit...|             H|
+|Fruits,Household,...|Maldives,Senegal,...|             L|
+|Cosmetics,Vegetab...|Libya,Canada,Mont...|             M|
++--------------------+--------------------+--------------+
+
+
+//to find the total profit of publisher in each year
+
+
+spark.sql("select Year,concat_ws(',',collect_list(Publisher))as publisher,concat_ws(',',collect_list(Name))as name,round(sum(Global_Sales),2)as total from gamedata group by Year order by Year").show
++----+--------------------+--------------------+------+
+|Year|           publisher|                name| total|
++----+--------------------+--------------------+------+
+|1980|Atari,Atari,Activ...|Asteroids,Missile...| 11.38|
+|1981|Activision,Parker...|Pitfall!,Frogger,...| 35.77|
+|1982|Atari,Atari,Atari...|Pac-Man,Dig Dug,M...| 28.86|
+|1983|Nintendo,Nintendo...|Baseball,Mario Br...| 16.79|
+|1984|Nintendo,Nintendo...|Duck Hunt,Exciteb...| 50.36|
+|1985|Nintendo,Nintendo...|Super Mario Bros....| 53.94|
+|1986|Nintendo,Namco Ba...|The Legend of Zel...| 37.07|
+|1987|Nintendo,Nintendo...|Zelda II: The Adv...| 21.74|
+|1988|Nintendo,Nintendo...|Super Mario Bros....| 47.22|
+|1989|Nintendo,Nintendo...|Tetris,Super Mari...| 73.45|
+|1990|Nintendo,Nintendo...|Super Mario World...| 49.39|
+|1991|Nintendo,Sega,Nin...|The Legend of Zel...| 32.23|
+|1992|Nintendo,Nintendo...|Super Mario Land ...| 76.16|
+|1993|Nintendo,Nintendo...|Super Mario All-S...| 45.98|
+|1994|Nintendo,Nintendo...|Donkey Kong Count...| 79.17|
+|1995|Nintendo,Activisi...|Donkey Kong Count...| 88.11|
+|1996|Nintendo,Nintendo...|Pokemon Red/Pokem...|199.15|
+|1997|Sony Computer Ent...|Gran Turismo,Fina...|200.98|
+|1998|Nintendo,Nintendo...|Pokémon Yellow: S...|256.47|
+|1999|Nintendo,Sony Com...|Pokemon Gold/Poke...|251.27|
++----+--------------------+--------------------+------+
+
+
+
+//to find profit of countries between certain dates
+
+spark.sql("select Country,to_date(`Order Date`,'M/d/yyyy')as date,`Total Profit` from data ").filter("date>'2014-01-01' and date<'2014-01-31'").show
++-----------+----------+------------+
+|    Country|      date|Total Profit|
++-----------+----------+------------+
+|      Benin|2014-01-28|      706.13|
+|    Ireland|2014-01-10|  1326834.38|
+|    Comoros|2014-01-16|   333927.84|
+|    Finland|2014-01-21|   407314.76|
+|     Jordan|2014-01-29|   405209.85|
+|    Somalia|2014-01-24|   607560.68|
+|North Korea|2014-01-19|    425282.0|
+|      Italy|2014-01-10|   528208.71|
+|   Maldives|2014-01-11|    357315.8|
++-----------+----------+------------+
+
+//commands on different types of file format
+
+//avro
+//for avro start shell using "spark-shell --packages org.apache.spark:spark-avro_2.12:3.0.0-preview"this command
+val data =df.write.format("com.databricks.spark.avro").save("t2.avro")
+
+val sh= spark.read.format("com.databricks.spark.avro").option("header","True").load("t2.avro/part-00000-bd8be606-82b3-4800-9318-bdac93e6569a-c000.avro")
+
+
+
+//how to use avro in a program 
+//first add "org.apache.spark"%"spark-avro_2.12"%"3.0.0-preview" in dependencies in build.sbt
+//and then during using spark-submit use "--packages org.apache.spark:spark-avro_2.12:3.0.0-preview"
+//use "--packages org.apache.spark:spark-avro_2.11:2.4.4"when spark version is 2.4.4
+
+
+
+//parquet
+
+val data =df.write.parquet("t.parquet")
+
+
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
+
+./spark-submit --class com.theorchard.royalties.ProcessTransactions  /var/www/html_asharma/royalties-compute/scala/target/scala-2.11/processtransactions_2.11-0.1.0-SNAPSHOT.jar
+
+
+
+
+
+./bin/spark-submit --packages org.apache.spark:spark-avro_2.11:2.4.4 --class com.theorchard.royalties.ProcessTransactions  /home/administrator/sharad2/royalties-compute/scala/target/scala-2.11/processtransactions_2.11-0.1.0-SNAPSHOT.jar /home/administrator/sharad2/royalties-compute/scala/src/test/resources/com/theorchard/royalties/config.json
+
+
+
+
+
+****************************to import all datatypes spark program***********
+from pyspark.sql.types import *   (for python)
+import org.apache.spark.sql.types._   (for scala)

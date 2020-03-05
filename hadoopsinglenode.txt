@@ -1,0 +1,132 @@
+1.install java
+
+2.download and extract hadoop
+
+3.paste following lines at end of .bashrc file :
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+
+export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
+
+###########-------#########
+
+4.paste java home in /usr/local/hadoop/etc/hadoop/hadoop-env.sh
+
+5.paste following lines at end of core-site.xml
+<configuration>
+<property>
+<name>fs.defaultFS</name>
+<value>hdfs://localhost:9000</value>
+</property>
+<property>
+<name>hadoop.tmp.dir</name>
+<value>/usr/local/hadoop/data/namenode</value>
+</property>
+</configuration>
+
+6.paste following lines at end of hdfs-site.xml
+
+<configuration>
+<property>
+<name>dfs.replication</name>
+<value>3</value>
+</property>
+</configuration>
+
+7.paste following lines at end of mapred-site.xml
+<configuration>
+<property>
+<name>mapreduce.framework.name</name>
+<value>yarn</value>
+</property>
+</configuration>
+
+8.paste following lines at end of yarn-site.xml
+<property>
+<name>yarn.nodemanager.aux-services</name>
+<value>mapreduce_shuffle</value>
+</property>
+<property>
+<name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+
+
+
+for spark on hadoop add following lines at the end of file spark-env.sh
+
+export HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+export YARN_CONF_DIR=/usr/local/hadoop/etc/hadoop
+
+
+
+
+
+************hive installation on hadoop(2.7.2)****************
+download hive 2.3.6 http://apachemirror.wuchna.com/hive/hive-2.3.6/apache-hive-2.3.6-bin.tar.gz
+ tar -xzf apache-hive-2.3.6-bin.tar.gz
+sudo mv apache-hive-2.3.6-bin.tar.gz /usr/local/hive
+paste following lines at end of file hive-env.sh
+	export HIVE_CONF_DIR=/usr/local/hive/conf
+	export HADOOP_HOME=/usr/local/hadoop
+paste following lines at end of file .bashrc
+	export HIVE_HOME=/usr/local/hive
+	export PATH=$PATH:$HIVE_HOME/bin
+source .bashrc
+hdfs dfs -mkdir -p /user/hive/warehouse
+hdfs dfs -chmod 666 /user/hive/warehouse
+hdfs dfs -mkdir /tmp
+hdfs dfs -chmod 666 /tmp
+cd /usr/local/hive/bin
+schematool -initSchema -dbType derby 
+cd /usr/local/hive/bin
+hive
+ create table employee (id int,name string ,dept string,yoj int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' STORED AS TEXTFILE;
+
+ load data inpath '/user/data/data.txt'overwrite into table emp2;
+
+
+
+
+
+***********************using hive metastore from spark******************
+Move hive-site.xml from $HIVE_HOME/conf/hive-site.xml to $SPARK_HOME/conf/hive-site.xml
+find an entry regarding hive metastore uris in this file. The entry will look like this:
+add the value of thrift://localhost:9083
+<property> 
+<name>hive.metastore.uris</name> 
+<!--make sure that <value> points to the Hive Metastore URI in your cluster -->
+<value>thrift://localhost:9083</value>
+<description>URI for client to contact metastore server</description> 
+</property>
+
+hive --service metastore
+now open another terminal 
+make a new file with .py extension and paste the following:
+
+import sys
+from pyspark.sql import SparkSession
+from pyspark.sql import HiveContext
+spark=SparkSession.builder.master("local").appName("spark session example").config("spark.sql.warehouse.dir","/user/hive/warehouse").config("hive.metastore.uris","thrift://localhost:9083").enableHiveSupport( ).getOrCreate()
+#vg=spark.read.format("csv").option("header","True").option("inferSchema","True").load("/user/data/data.txt")#this path takes data from hdfs
+vg=spark.read.format("csv").option("header","True").option("inferSchema","True").load("file:///home/administrator/data.txt") #this path takes data from local machine
+vg.show()
+#vg.createTempView("data")
+#spark.sql("use russ")
+#spark.sql("create table emp2(id int,name string, dept string,yoj int) row format delimited fields terminated by ',' lines terminated by '\n' stored as textfile")
+#spark.sql("insert into emp2 select * from data")
+#spark.sql("create database russ")
+#spark.sql("use russ")
+#spark.sql("create table emp(id int,name string, dept string,yoj int) row format delimited fields terminated by ',' lines terminated by '\n' stored as textfile")
+#spark.sql("load data inpath '/user/data/data.txt' overwrite into table emp")
+#df=spark.sql("select * from emp")
+#df.show()
+run the file using the foll command from /usr/local/spark/bin/ location
+./spark-submit --master yarn --deploy-mode client /home/administrator/hive.py

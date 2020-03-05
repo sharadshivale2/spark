@@ -1,0 +1,6 @@
+//show all data
+df.select(df.columns).show()
+input=df.first()
+rows = input.filter(lambda line: line != header)
+//used to substract two lists:
+l3 = [x for x in l1 if x not in l2]

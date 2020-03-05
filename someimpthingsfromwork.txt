@@ -1,0 +1,185 @@
+https://www.analyticsvidhya.com/blog/2017/01/scala/
+
+https://stackoverflow.com/questions/28324984/submit-task-to-spark
+
+https://github.com/deanwampler/spark-scala-tutorial
+
+scala> def sayhello(s:String){
+    | println(s"Hello, $s")
+    | }
+sayhello: (s: String)Unit
+Suppose we have a string ‘name’:
+scala> val name:String="Ayushi"
+name: String = Ayushi
+
+
+
+
+
+9:26 AM
+scala> def func(f:String=>Unit,s:String){
+    | f(s)
+    | }
+func: (f: String => Unit, s: String)Unit
+scala> func(sayhello,name)
+
+
+https://data-flair.training/blogs/scala-string-method/
+
+https://cloud.google.com/dataproc/docs/tutorials/spark-scala
+
+https://itnext.io/running-spark-job-on-kubernetes-minikube-958cadaddd55
+
+
+https://vitux.com/install-and-deploy-kubernetes-on-ubuntu/
+
+https://dzone.com/articles/how-kubernetes-works
+
+
+ I was able to make it work on my environment by reinstalling it but making sure I removed everything related to kube as the following:
+kubeadm reset
+sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube*
+sudo apt-get autoremove
+sudo rm -rf ~/.kube
+sudo rm -rf ~/.minikube
+sudo rm -rf /var/lib/minikube
+sudo rm -rf /var/lib/kubelet
+sudo rm -rf /var/lib/localkube
+sudo rm -rf /data/minikube
+sudo rm -rf /var/lib/kubeadm.yaml
+
+
+
+https://medium.com/@toddrosner/spark-on-kubernetes-b18f16ac95ad
+
+
+
+1. RDDs are partitioned in Driver? If it is partitioned in Driver, the RDDs are passed on to Executors thru network?
+2. Can all the partitions of RDDs reside in the same executor & parallelly operated upon by many task?
+Reply
+Nishanth Shanmugam
+ August 19, 2019 at 9:31 am
+1.Yes RDDs are partitioned in the Driver by the SparkContext (user can define the number of partitions or it does it automatically based on the number of partitions that can be run in each CPU.) 2.Then those partitions are sent to the Worker Node by the Cluster Manager where the actual computation takes place.
+3.Suppose you have 1 Executor containing 1 CPU. 1 CPU can execute up to 4 partitions. Then the cluster manager will send 4 partitions to that Executor, 3 partitions will remain in the cache and at a time only 1 task process 1 partition. Next the second partition will be processed by the task while others wait in the cache.
+4.This entire cache-task process takes place based on the Spark’s internal scheduling algorithm.
+
+
+
+spark creates one partition for each block of the file (blocks being 128MB by default in HDFS), but you can also ask for a higher number of partitions by passing a larger value. Note that you cannot have fewer partitions than blocks.
+
+
+
+ kaggle.com/
+SharadShivale
+
+http://eforexcel.com/wp/downloads-18-sample-csv-files-data-sets-for-testing-sales/
+
+
+https://github.com/apache/spark/blob/master/examples/src/main/scala/org/apache/spark/examples/sql/SparkSQLExample.scala
+
+
+https://sparkbyexamples.com/spark/spark-date-functions-how-to-parse-and-format-date/
+
+
+https://kundankishore.in/
+
+
+
+http://www.transindiatravels.com/maharashtra/lonavala/tourist-places-to-visit-in-lonavala/
+
+
+ Linux Administration Bootcamp: Go from Beginner
+
+
+https://www.udemy.com/course/oracledbatraining/
+
+
+https://ladlepatel.wordpress.com/
+
+
+https://qr.ae/TJ0Rl1
+
+
+https://qr.ae/TxG6s8
+
+
+https://qr.ae/TxGL7o
+
+starcluster
+
+
+https://www.coursera.org/
+
+
+https://docs.cloudera.com/documentation/enterprise/latest/topics/cdh_ig_running_spark_on_yarn.html#spark_on_yarn_config
+
+
+
+https://www.slideshare.net/SparkSummit/top-5-mistakes-when-writing-spark-applications-63071421
+
+
+ https://mapr.com/blog/best-practices-yarn-resource-management/
+
+How many types of calls were made to the fire department?
+How many incidents of each call type were there?
+How many years of fire service calls are in the data file?
+How many service calls were logged in for the past 7 days?
+Which neighborhood in SF generated the most calls last year?
+
+
+ https://dzone.com/articles/apache-spark-on-yarn-performance-and-bottlenecks
+
+https://www.slideshare.net/SparkSummit/top-5-mistakes-when-writing-spark-applications-63071421
+
+how to specify which datanode to use in hadoop quora
+
+https://www.tutorialspoint.com/apache_spark/apache_spark_useful_resources.htm
+
+https://github.com/Teradata/kylo/tree/master/samples/sample-data
+
+
+https://bigdataprogrammers.com/load-text-file-into-hive-table-using-spark/
+
+
+https://www.quora.com/What-can-be-some-good-pet-projects-to-learn-Apache-Spark
+
+https://www.quora.com/What-are-some-interesting-beginner-level-projects-that-can-be-built-using-Apache-Spark-and-Scala
+
+https://stackoverflow.com/questions/27009825/running-multiple-datanodes-on-same-machine
+
+https://retired.re-ynd.com/how-to-retire-early-in-5-steps/
+
+https://www.datacamp.com/community/tutorials/sql-tutorial-query
+
+http://lib.stat.cmu.edu/datasets/
+
+http://saptak.in/spark/019-hive-orc-spark.html
+
+https://spark.apache.org/docs/latest/sql-distributed-sql-engine.html
+
+http://spark.apache.org/docs/latest/api/python/pyspark.sql.html?highlight=filter
+
+https://mapr.com/blog/best-practices-yarn-resource-management/
+
+https://www.linode.com/docs/databases/hadoop/install-configure-run-spark-on-top-of-hadoop-yarn-cluster/
+
+https://sparkbyexamples.com/spark/read-write-avro-file-spark-dataframe/
+
+https://ladlepatel.wordpress.com/
+
+https://mapr.com/blog/spark-streaming-and-twitter-sentiment-analysis/
+
+https://mapr.com/docs/61/Spark/LoadDataDataFrameExplicitSchema.html
+
+https://www.tutorialspoint.com/spark_sql/programmatically_specifying_schema.htm
+https://blog.cloudera.com/how-to-tune-your-apache-spark-jobs-part-2/
+
+https://sparkbyexamples.com/spark/spark-read-csv-file-into-dataframe/
+
+https://bigdataprogrammers.com/read-csv-file-spark-scala/
+
+https://www.quora.com/How-do-I-get-job-in-Hadoop-as-a-fresher
+
+https://www.quora.com/Where-do-I-apply-for-a-Hadoop-fresher-job
+
+https://www.quora.com/What-are-Mutual-funds-How-do-they-work
