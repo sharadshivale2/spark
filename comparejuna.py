@@ -5,8 +5,8 @@ from sqlalchemy import types,create_engine
 csv_data=pd.read_csv("DISTRO-2357.csv",usecols=['Track ID','Performer Legal/Birth Name','Performer Role'])
 track=tuple(csv_data['Track ID'])
 #print(track)
-#engine=create_engine('mysql+mysqlconnector://asingh:*ABnR*Me*B9LbetYaM@qa-ows-track.cluster-cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
-engine=create_engine('mysql+mysqlconnector://asingh:FNqXh3B8xsJPFYZu@i@prod-ows-track.cluster-cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
+#engine=create_engine('mysql+mysqlconnector://DBcreds',echo=False)
+engine=create_engine('mysql+mysqlconnector://DBcreds',echo=False)
 data=pd.read_sql_query("select birth_name,unique_track_id,performer_type from performer where unique_track_id in "+str(track),engine)
 csv_new=csv_data.sort_values(by=['Track ID'])
 
