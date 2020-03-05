@@ -26,7 +26,7 @@ csv_data.columns=csv_data.columns.str.replace(".","_")
 track=csv_data['Track_ID']
 
 #create the connection engine
-engine=create_engine('mysql+mysqlconnector://ugala:VDBFvd4cbsZCqV9Z@prod-ows.cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
+engine=create_engine('mysql+mysqlconnector://user:pass@hostname:3306/database_name',echo=False)
 #read the database data as pandas dataframe
 database_data=pd.read_sql_query("select birth_name,performer_role_id,unique_track_id,performer_type from performer where unique_track_id in "+str(tuple(track)),engine)
 
