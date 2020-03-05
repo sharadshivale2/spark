@@ -3,7 +3,7 @@ from sqlalchemy import types,create_engine
 
 
 performers=int(input("enter no of performers"))
-csv=pd.read_excel("E:\performers data\DISTRO-2357\Eksik Bilgiler_Toygar Ali Işıklı.xlsx",header=0,encoding='latin1')
+csv=pd.read_excel("path",header=0,encoding='latin1')
 
 #csv['Performer Type'].replace({"Primary Performer":"primary","Featured Performer":"featured","Non Featured Performer":"non-featured"},inplace=True)
 #csv['Performer Role'].replace({"Wind Instruments - Saxaphone":"Wind Instruments - Saxophone"},inplace=True)
@@ -28,8 +28,8 @@ track=csv_data['Track_ID']
 print(len(track))
 
 ###both qa and prod creds  are passed comment out as per needs#### 
-#engine=create_engine('mysql+mysqlconnector://asingh:*ABnR*Me*B9LbetYaM@qa-ows-track.cluster-cb22xqmk0y0q.us-east-1.rds.amazonaws.com/ows_track',echo=False)
-engine=create_engine('mysql+mysqlconnector://ugala:VDBFvd4cbsZCqV9Z@prod-ows.cb22xqmk0y0q.us-east-1.rds.amazonaws.com:3306/ows_track',echo=False)
+#engine=create_engine('mysql+mysqlconnector://DBcreds',echo=False)
+engine=create_engine('mysql+mysqlconnector://Dbcreds',echo=False)
 #data_role=pd.read_sql_query('SELECT performer_role, performer_role_id FROM performer_role',engine)
 database_data=pd.read_sql_query("select birth_name,performer_role_id,unique_track_id,performer_type from performer where unique_track_id in "+str(tuple(track)),engine)
 #database_data['birth_name'].replace({"Toygar Ali I??kl?":"Toygar Ali Işıklı"},inplace=True)
